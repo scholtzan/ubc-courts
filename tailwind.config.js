@@ -4,6 +4,11 @@ export default {
   theme: {
     extend: {},
   },
+  daisyui: {
+		themes: ['light'],
+		styled: true,
+		base: true
+	},
   plugins: [require('daisyui')],
 }
 

@@ -60,7 +60,7 @@
     <button class="btn btn-ghost text-xl">UBC Tennis Courts 🎾</button>
 </div>
 
-<div class="content mx-8">
+<div class="content mx-4">
     <label class="form-control w-full max-w-xs">
         <div class="label">
             <span class="label-text">View</span>
