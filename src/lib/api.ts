@@ -40,7 +40,7 @@ export const getCourts = async (): Promise<TennisCourt[]> => {
     }
 }
 
-export const getCourtAvailabilities = async (courtId: string, date: string, days: number): Promise<string[]> => {
+export const getCourtAvailabilities = async (courtId: string, date: string, days: number): Promise<Map<string, boolean>> => {
     try {
         const url = BASE_URL + `/24063/Clients/BookMe4LandingPages/Facility?facilityId=${courtId}`
         const request = await fetch(url, {
@@ -113,7 +113,7 @@ export const getCourtAvailabilities = async (courtId: string, date: string, days
 
         const data = await response.json();
         // console.log(data);
-        var availabilities = [];
+        var availabilities = new Map<string, boolean>();
 
         for (var availabilityDay of data.availabilities) {
             const date = new Date(0);
@@ -122,7 +122,7 @@ export const getCourtAvailabilities = async (courtId: string, date: string, days
             for (var bookingGroup of availabilityDay.BookingGroups) {
                 for (var availableSpot of bookingGroup.AvailableSpots) {
                     date.setHours(availableSpot.Time.Hours);
-                     availabilities.push(date.toISOString())
+                    availabilities.set(date.toJSON(), !availableSpot.IsDisabled);
                 }
             }
         }
@@ -130,7 +130,7 @@ export const getCourtAvailabilities = async (courtId: string, date: string, days
         return availabilities;
     } catch (error) {
         console.error('API call failed:', error);
-        return [];
+        return new Map<string, boolean>();
     }
 }
 

@@ -2,7 +2,7 @@ export interface TennisCourt {
     id: string,
     name: string,
     imageUrl: string | undefined,
-    availabilities: string[]
+    availabilities: Map<string, boolean>
 }
 
 export interface RequestTokens {
