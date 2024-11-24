@@ -93,12 +93,8 @@
                 </button>
             </div>
             <div class="navbar-center">
-                <span class="text-xl">
-                    {#if selectedView == "Day"}
+                <span class="text-large">
                     {selectedDate.toDateString()}
-                    {:else}
-                    {selectedDate.toDateString()}
-                    {/if}
                 </span>
             </div>
             <div class="navbar-end">
