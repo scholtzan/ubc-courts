@@ -92,7 +92,7 @@
                     Today
                 </button>
             </div>
-            <div class="navbar-center hidden lg:flex">
+            <div class="navbar-center">
                 <span class="text-xl">
                     {#if selectedView == "Day"}
                     {selectedDate.toDateString()}
