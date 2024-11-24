@@ -117,7 +117,6 @@ export const getCourtAvailabilities = async (courtId: string, date: string, days
 
         for (var availabilityDay of data.availabilities) {
             const date = new Date(parseInt(availabilityDay.Date.replace("/Date(", "").replace(")/", "")));
-            date.setDate(date.getDate() + 1);
 
             for (var bookingGroup of availabilityDay.BookingGroups) {
                 for (var availableSpot of bookingGroup.AvailableSpots) {
