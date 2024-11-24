@@ -40,6 +40,19 @@
         goto(`?${$page.url.searchParams.toString()}`);
         selectedDate = new Date($page.url.searchParams.get('date'));
     }
+
+    function dateRange(startDate: Date, days: number): string[] {
+        const copiedDate = new Date(startDate.getTime());
+        var dates: string[] = [];
+        const range = Array.from({length: days}, (v, k) => k);
+        
+        range.forEach((r) => {
+            dates.push(copiedDate.toDateString())
+            copiedDate.setDate(copiedDate.getDate() + 1)
+        });
+
+        return dates;
+    }
 </script>
 
 
@@ -61,7 +74,7 @@
     <div class="mt-8">
         <div class="navbar bg-base-300">
             <div class="navbar-start">
-                <button class="btn btn-square" on:click={() => updateDate(selectedView == "Day" ? -1 : -7)}>
+                <button class="btn btn-square" on:click={() => updateDate(-1)}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-6 w-6"
@@ -89,7 +102,7 @@
                 </span>
             </div>
             <div class="navbar-end">
-                <button class="btn btn-square" on:click={() => updateDate(selectedView == "Day" ? 1 : 7)}>
+                <button class="btn btn-square" on:click={() => updateDate(1)}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-6 w-6"
@@ -132,9 +145,9 @@
                                 </a>
                                 {:else}
                                 <div class="tooltip" data-tip="Bookable 24 hours in advance">
-                                    <button class="btn btn-disabled btn-sm" tabindex="-1" role="button" aria-disabled="true">
+                                    <a href="https://ubc.perfectmind.com/24063/Clients/BookMe4LandingPages/Facility?facilityId={court.id}" target="_blank" class="btn btn-disabled btn-sm" tabindex="-1" role="button" aria-disabled="true">
                                         Open
-                                    </button>
+                                    </a>
                                 </div>
                                 {/if}
                             </td>
@@ -147,7 +160,44 @@
             </tbody>
             </table>
             {:else}
-
+            <table class="table table-zebra">
+                <!-- head -->
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        {#each dateRange(selectedDate, 7) as date}
+                            <th>{date}</th>
+                        {/each}
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each data.hours as hour}
+                    <!-- row 1 -->
+                    <tr>
+                    <th>{hour}:00</th>
+                        {#each dateRange(selectedDate, 7) as date}
+                            <td>
+                            {#each data.courts as court}
+                                {#if court.availabilities.has((new Date(new Date(date).getFullYear(), new Date(date).getMonth(), new Date(date).getDate(), hour - new Date(date).getTimezoneOffset() / 60, 0, 0)).toJSON())}
+                                    {#if court.availabilities.get((new Date(new Date(date).getFullYear(), new Date(date).getMonth(), new Date(date).getDate(), hour - new Date(date).getTimezoneOffset() / 60, 0, 0)).toJSON()) }
+                                    <a href="https://ubc.perfectmind.com/24063/Clients/BookMe4LandingPages/Facility?facilityId={court.id}" target="_blank" class="btn btn-square btn-neutral btn-sm mx-1 mb-1" tabindex="-1" role="button" aria-disabled="true">
+                                        {court.shortName}
+                                    </a>
+                                    {:else}
+                                    <div class="tooltip" data-tip="Bookable 24 hours in advance">
+                                        <button class="btn btn-square btn-disabled btn-sm mx-1 mb-1" tabindex="-1" role="button" aria-disabled="true">
+                                            {court.shortName}
+                                        </button>
+                                    </div>
+                                    {/if}
+                                {/if}
+                            {/each}
+                            </td>
+                        {/each}
+                    </tr>
+                    {/each}
+                </tbody>
+            </table>
             {/if}
         </div>
     </div>

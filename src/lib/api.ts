@@ -27,6 +27,7 @@ export const getCourts = async (): Promise<TennisCourt[]> => {
         const courts: TennisCourt[] = await Promise.all(data.facilities.map(async (court: any) => ({
             id: court.ID,
             name: court.Name,
+            shortName: parseInt(court.Name.split(" ")[1]).toString(),
             imageUrl: court.Image,
             availabilities: await getCourtAvailabilities(court.ID, (new Date()).toISOString(), 7)
         })));
@@ -112,16 +113,17 @@ export const getCourtAvailabilities = async (courtId: string, date: string, days
         }
 
         const data = await response.json();
-        // console.log(data);
         var availabilities = new Map<string, boolean>();
 
         for (var availabilityDay of data.availabilities) {
-            const date = new Date(0);
-            date.setUTCMilliseconds(availabilityDay.Date.replace("/Date(", "").replace(")/", ""))
+            const date = new Date(parseInt(availabilityDay.Date.replace("/Date(", "").replace(")/", "")));
+            date.setDate(date.getDate() + 1);
 
             for (var bookingGroup of availabilityDay.BookingGroups) {
                 for (var availableSpot of bookingGroup.AvailableSpots) {
-                    date.setHours(availableSpot.Time.Hours);
+
+                    date.setHours(availableSpot.Time.Hours - date.getTimezoneOffset() / 60);
+                    
                     availabilities.set(date.toJSON(), !availableSpot.IsDisabled);
                 }
             }
